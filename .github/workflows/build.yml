@@ -1,40 +1,24 @@
-name: Build Android App
-
-on:
-  push:
-    branches: [ main, master ]
-  workflow_dispatch:
-
+name: Build Android App (APK & AAB & SHA)
+on: [push, workflow_dispatch]
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
+    - uses: actions/checkout@v4
+    - uses: actions/setup-java@v5
       with:
         distribution: 'temurin'
         java-version: '17'
-
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v3
+    - uses: gradle/actions/setup-gradle@v3
+    - run: gradle assembleDebug bundleDebug
+    - run: |
+        mkdir -p output_artifacts
+        cp app/build/outputs/apk/debug/app-debug.apk output_artifacts/ZEKAT_AS_STANI_debug.apk
+        cp app/build/outputs/bundle/debug/app-debug.aab output_artifacts/ZEKAT_AS_STANI_debug.aab
+        cd output_artifacts
+        sha256sum ZEKAT_AS_STANI_debug.apk ZEKAT_AS_STANI_debug.aab > checksums.txt
+        cat checksums.txt
+    - uses: actions/upload-artifact@v4
       with:
-        gradle-version: '8.5'
-
-    - name: Build APK and AAB with Gradle
-      run: gradle assembleDebug bundleDebug
-
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: app-debug-apk
-        path: app/build/outputs/apk/debug/app-debug.apk
-
-    - name: Upload AAB
-      uses: actions/upload-artifact@v4
-      with:
-        name: app-debug-aab
-        path: app/build/outputs/bundle/debug/app-debug.aab
+        name: ZEKAT_AS_STANI-apk-aab-and-sha
+        path: output_artifacts/
