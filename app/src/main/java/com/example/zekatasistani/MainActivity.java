@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         final ProgressBar progressBar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
-        RelativeLayout.LayoutParams pbParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 6);
+        RelativeLayout.LayoutParams pbParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
         pbParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
         progressBar.setLayoutParams(pbParams);
         progressBar.setMax(100);
